@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cadastro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Cadastro</h2>
+        
+        <form id="cadastroForm" class="space-y-6" novalidate>
+            <div class="space-y-2">
+                <label for="nomeCompleto" class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                <input type="text" id="nomeCompleto" name="nomeCompleto" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Digite seu nome completo">
+                <p class="text-red-500 text-xs hidden" id="nomeCompletoError"></p>
+            </div>
+
+            <div class="space-y-2">
+                <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
+                <input type="email" id="email" name="email" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Digite seu e-mail">
+                <p class="text-red-500 text-xs hidden" id="emailError"></p>
+            </div>
+
+            <div class="space-y-2">
+                <label for="mensagem" class="block text-sm font-medium text-gray-700">Mensagem</label>
+                <textarea id="mensagem" name="mensagem" required rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Digite sua mensagem"></textarea>
+                <p class="text-red-500 text-xs hidden" id="mensagemError"></p>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                Enviar
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('cadastroForm');
+            const campos = {
+                nomeCompleto: {
+                    input: document.getElementById('nomeCompleto'),
+                    error: document.getElementById('nomeCompletoError'),
+                    validacao: (valor) => {
+                        if (valor.trim().length < 3) {
+                            return 'O nome completo deve ter pelo menos 3 caracteres';
+                        }
+                        if (!/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(valor)) {
+                            return 'O nome deve conter apenas letras';
+                        }
+                        return '';
+                    }
+                },
+                email: {
+                    input: document.getElementById('email'),
+                    error: document.getElementById('emailError'),
+                    validacao: (valor) => {
+                        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor)) {
+                            return 'Digite um e-mail válido';
+                        }
+                        return '';
+                    }
+                },
+                mensagem: {
+                    input: document.getElementById('mensagem'),
+                    error: document.getElementById('mensagemError'),
+                    validacao: (valor) => {
+                        if (valor.trim().length < 10) {
+                            return 'A mensagem deve ter pelo menos 10 caracteres';
+                        }
+                        return '';
+                    }
+                }
+            };
+
+            // Validação em tempo real
+            Object.keys(campos).forEach(campo => {
+                campos[campo].input.addEventListener('input', () => {
+                    const erro = campos[campo].validacao(campos[campo].input.value);
+                    campos[campo].error.textContent = erro;
+                    campos[campo].error.classList.toggle('hidden', !erro);
+                    campos[campo].input.classList.toggle('border-red-500', !!erro);
+                });
+            });
+
+            // Validação no envio do formulário
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                let temErro = false;
+
+                Object.keys(campos).forEach(campo => {
+                    const erro = campos[campo].validacao(campos[campo].input.value);
+                    campos[campo].error.textContent = erro;
+                    campos[campo].error.classList.toggle('hidden', !erro);
+                    campos[campo].input.classList.toggle('border-red-500', !!erro);
+                    if (erro) temErro = true;
+                });
+
+                if (!temErro) {
+                    // Aqui você pode adicionar a lógica para enviar os dados para um backend
+                    alert('Formulário válido! Dados prontos para serem enviados.');
+                    form.reset();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
